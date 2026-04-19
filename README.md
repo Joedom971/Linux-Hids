@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 # SOC HIDS — Host Intrusion Detection System
 
 A Bash-based Host Intrusion Detection System for Linux. Detects compromise indicators across file integrity, account activity, running processes, open ports, and system health. Designed for Linux workstations and servers; validated on Kali.
