@@ -104,9 +104,13 @@ _attack_ld_preload() {
   require_root || return 0
 
   local lib="/tmp/.hids_ld_$$.so"
-  # A zero-byte file is enough — the detector only reads the env var, not
-  # the library itself. Using a real hook would work but isn't needed.
-  : > "$lib"
+  # The detector only reads the env var, not the library itself. BUT ld.so
+  # validates the LD_PRELOAD file before launching the process: an invalid
+  # ELF is silently stripped from the env. We therefore copy an existing libc
+  # (always a valid ELF) so LD_PRELOAD survives into the child environment.
+  cp "$(ldconfig -p | awk '/libc\.so/{print $NF; exit}')" "$lib" 2>/dev/null \
+    || cp /lib/x86_64-linux-gnu/libc.so.6 "$lib" 2>/dev/null \
+    || : > "$lib"
   journal_log "tmpfile" "$lib"
 
   # ATTACK: long-running process with LD_PRELOAD set
