@@ -142,6 +142,10 @@ The `tests/` directory holds attack-simulation tests that **actually compromise 
 | Process / network | Wildcard `0.0.0.0` bind | `WARNING` |
 | Process / network | `LD_PRELOAD` injection | `CRITICAL` |
 
+![Test suite passing](docs/screenshots/test-suite.png)
+
+Full run on a fresh Kali (non-invasive mode): **12 PASS, 0 FAIL**. Invasive tests (real `useradd`, real `/etc/shadow` edits) are skipped without `--invasive` but still report PASS.
+
 **Run the safe subset** (non-invasive only):
 
 ```bash
