@@ -85,6 +85,42 @@ sudo systemctl enable --now hids && sudo systemctl status hids
 
 Live alerts tail in the supervisor terminal. JSON alerts go to `logs/alerts.json`. Full operator guide below.
 
+## Uninstall
+
+To remove HIDS completely from a host (service, auditd rules, project files):
+
+```bash
+# 1. Stop and disable the systemd service
+sudo systemctl stop hids
+sudo systemctl disable hids
+sudo rm /etc/systemd/system/hids.service
+sudo systemctl daemon-reload
+
+# 2. Remove the auditd rules deployed by install.sh
+sudo rm /etc/audit/rules.d/hids.rules 2>/dev/null
+sudo augenrules --load 2>/dev/null
+sudo systemctl restart auditd
+
+# 3. Kill any leftover HIDS process
+sudo pkill -f "Linux-Hids-Muza-Mahmoud-Johan" 2>/dev/null
+sudo pkill -f "modules/" 2>/dev/null
+sudo pkill -9 -f "inotifywait.*etc" 2>/dev/null
+
+# 4. Remove the project directory (baselines, logs, run)
+cd ~
+sudo rm -rf Linux-Hids-Muza-Mahmoud-Johan
+```
+
+**Sanity check:**
+
+```bash
+systemctl status hids 2>&1 | head -1   # "Unit hids.service could not be found."
+sudo auditctl -l                        # "No rules"
+ps -ef | grep -E "modules/|inotifywait.*etc" | grep -v grep   # empty
+```
+
+Dependencies installed by `install.sh` (`auditd`, `bc`, `inotify-tools`, `jq`) are intentionally **not** removed: they may be used by other tools on the host. Remove them manually with your package manager if needed.
+
 ## Team and contributions
 
 Four-day BeCode bootcamp team project. Three contributors, each with their own GitHub identity in the commit history:
