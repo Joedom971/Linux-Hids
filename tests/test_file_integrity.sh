@@ -94,8 +94,9 @@ _attack_inotify_burst() {
   }
 
   # Use an existing critical file the event module already watches.
-  # /etc/hostname is low-impact: we back it up, touch it, restore it.
-  local victim="/etc/hostname"
+  # /etc/hosts is in CRITICAL_FILES so the inotify watcher actually alerts on it.
+  # We back it up, touch it (no content change), restore from the journal.
+  local victim="/etc/hosts"
   [[ -f "$victim" ]] || return 1
   local bak
   bak=$(backup_file "$victim") || return 1
@@ -110,7 +111,10 @@ _attack_inotify_burst() {
   touch "$victim"
   sleep 2
 
-  kill "$watcher" 2>/dev/null || true
+  # SIGTERM is ignored by bash while it waits on a pipeline (inotifywait | while ...)
+  # so we force-kill the watcher and its children (inotifywait + the while subshell).
+  pkill -9 -P "$watcher" 2>/dev/null || true
+  kill -9 "$watcher" 2>/dev/null || true
   wait "$watcher" 2>/dev/null || true
 
   assert_alert "CRITICAL" "file_integrity_events" "$victim" \
