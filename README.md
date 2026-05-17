@@ -2,7 +2,7 @@
 
 A Bash-based Host Intrusion Detection System for Linux. Detects compromise indicators across file integrity, account activity, running processes, open ports, and system health. Built as a BeCode team project by **Mahmoud Hasan**, **Johan-Emmanuel Hatchi**, and **Muza** (more in [`Team and contributions`](#team-and-contributions)).
 
-[![shellcheck](https://github.com/Jhatchi/Linux-Hids-Muza-Mahmoud-Johan/actions/workflows/shellcheck.yml/badge.svg)](https://github.com/Jhatchi/Linux-Hids-Muza-Mahmoud-Johan/actions/workflows/shellcheck.yml)
+[![shellcheck](https://github.com/Jhatchi/linux-hids-bash/actions/workflows/shellcheck.yml/badge.svg)](https://github.com/Jhatchi/linux-hids-bash/actions/workflows/shellcheck.yml)
 [![Bash](https://img.shields.io/badge/bash-%E2%89%A5%204.0-1f425f.svg?logo=gnubash&logoColor=white)](#requirements)
 [![Platform](https://img.shields.io/badge/platform-Linux-lightgrey.svg?logo=linux&logoColor=white)](#requirements)
 [![Tested on](https://img.shields.io/badge/tested%20on-Kali-557C94.svg?logo=kalilinux&logoColor=white)](#requirements)
@@ -72,7 +72,7 @@ The test suite under `tests/` is **invasive**: it modifies real users, real `/et
 On a Linux host (Debian/Ubuntu/RHEL family), as root:
 
 ```bash
-git clone https://github.com/Jhatchi/Linux-Hids-Muza-Mahmoud-Johan.git && cd Linux-Hids-Muza-Mahmoud-Johan
+git clone https://github.com/Jhatchi/linux-hids-bash.git && cd linux-hids-bash
 sudo bash install.sh                    # auto-installs auditd, bc, inotify-tools, jq, deploys auditd rules
 sudo bash main.sh --init && sudo bash main.sh   # capture baseline, then start the supervisor (foreground)
 ```
@@ -102,13 +102,13 @@ sudo augenrules --load 2>/dev/null
 sudo systemctl restart auditd
 
 # 3. Kill any leftover HIDS process
-sudo pkill -f "Linux-Hids-Muza-Mahmoud-Johan" 2>/dev/null
+sudo pkill -f "linux-hids-bash" 2>/dev/null
 sudo pkill -f "modules/" 2>/dev/null
 sudo pkill -9 -f "inotifywait.*etc" 2>/dev/null
 
 # 4. Remove the project directory (baselines, logs, run)
 cd ~
-sudo rm -rf Linux-Hids-Muza-Mahmoud-Johan
+sudo rm -rf linux-hids-bash
 ```
 
 **Sanity check:**
@@ -263,7 +263,7 @@ jq -s 'map(select(.test_run == null))' logs/alerts.json             # exclude te
 ## Directory layout
 
 ```text
-Linux-Hids-Muza-Mahmoud-Johan/
+linux-hids-bash/
 ├── install.sh                  # one-shot installer (deps + auditd rules + systemd unit)
 ├── main.sh                     # operator entry point (supervisor launcher)
 ├── controller.sh               # the supervisor itself
